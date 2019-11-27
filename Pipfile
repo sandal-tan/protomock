@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pynvim = "*"
+pylint = "*"
+mypy = "*"
+pytest = "*"
+isort = "*"
+yapf = "*"
+pytest-cov = "*"
+
+[packages]
+protobuf = "*"
+grpcio = "*"
+grpcio-tools = "*"
+faker = "*"
+
+[requires]
+python_version = "3.7"

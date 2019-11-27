@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message SimpleMessage {
+  string name = 1;
+  float decimal = 2;
+  int32 count = 3;
+  bool is_simple = 4;
+}
+
+message DependentMessage {
+  string name = 1;
+  SimpleMessage simple_message = 2;
+}
