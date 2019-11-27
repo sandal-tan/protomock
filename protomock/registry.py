@@ -1,6 +1,9 @@
 """A registry for registering mocks for proto-items."""
 
+from google.protobuf.pyext._message import Descriptor as MessageDescriptor
+
 from protomock.errors import NoMockFoundError
+from protomock.message import MockMessage
 
 class MockRegistry:
     """A registry for registering mocks for messages."""
@@ -8,18 +11,18 @@ class MockRegistry:
     def __init__(self):
         self._registry = {}
 
-    def add_mock_for_message(self, message_name: str, mock_class: 'MockMessage'):
+    def add_mock_for_message(self, message_descriptor: MessageDescriptor):
         """Add a mock for a message.
 
         Args:
-            message_name: The name of the message for which a mock is registered
+            message_descriptor: The descriptor of the message for which a mock is registered
             mock_class: The class with which the mock will be generated.
 
         """
-        if message_name in self._registry:
+        if message_descriptor in self._registry:
             return
 
-        self._registry[message_name] = mock_class
+        self._registry[message_descriptor.full_name] = lambda f: MockMessage(message_descriptor, f)
 
     def get_mock_class(self, message_name) -> 'MockMessage':
         """Get a mock class for a message.

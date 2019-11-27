@@ -5,7 +5,6 @@ from typing import Any, Optional
 import faker
 from google.protobuf.pyext._message import FieldDescriptor
 
-from protomock.registry import MockRegistry
 from protomock.errors import NoProviderError
 
 class FieldValueProvider:
@@ -17,7 +16,7 @@ class FieldValueProvider:
 
     """
 
-    def __init__(self, mock_registry: MockRegistry, seed: Optional[int] = None):
+    def __init__(self, mock_registry, seed: Optional[int] = None):
         self._registry = mock_registry
         self._faker = faker.Faker()
         if seed is not None:
@@ -54,7 +53,7 @@ class FieldValueProvider:
 
         if field.type == FieldDescriptor.TYPE_MESSAGE:
             message_type = field.message_type.full_name
-            return self._registry[message_type]()
+            return self._registry[message_type](self)
 
         raise NoProviderError(f'Field: {field.full_name}')
 
