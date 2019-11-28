@@ -22,7 +22,7 @@ class MockRegistry:
         if message_descriptor in self._registry:
             return
 
-        self._registry[message_descriptor.full_name] = lambda f: MockMessage(message_descriptor, f)
+        self._registry[message_descriptor.full_name] = lambda f, p=False: MockMessage(message_descriptor, f, p)
 
     def get_mock_class(self, message_name) -> 'MockMessage':
         """Get a mock class for a message.
