@@ -1,19 +1,24 @@
-from protomock import registry, errors
+from dataclasses import dataclass
 
 import pytest
 
+from protomock import registry, errors
+from protos import message_pb2
+
+
+    
+
 @pytest.fixture(scope='function')
 def test_registry():
-    return registry.MockRegistry()
+    r = registry.MockRegistry()
+    r.add_mock_for_message(message_pb2.SimpleMessage.DESCRIPTOR)
+    return r
 
 class TestMockRegistry:
 
     @staticmethod
     def test_add_mock_for_message(test_registry):
-        test_registry['simple_message'] = int
-        assert test_registry['simple_message']() == 0
-        test_registry['simple_message'] = str
-        assert test_registry['simple_message']() == 0
+        message = test_registry['simple_message'] == 0
 
     @staticmethod
     def test_get_mock_class(test_registry):

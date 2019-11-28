@@ -7,7 +7,7 @@ from protos.message_pb2 import SimpleMessage, DependentMessage
 
 @pytest.fixture
 def test_provider():
-    return field.FieldValueProvider({SimpleMessage.DESCRIPTOR.full_name: (lambda: 'simple_message')})
+    return field.FieldValueProvider({SimpleMessage.DESCRIPTOR.full_name: (lambda _: 'simple_message')})
 
 
 class TestFieldValueProvider:

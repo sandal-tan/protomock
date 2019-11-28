@@ -45,8 +45,5 @@ class MockRegistry:
     def __getitem__(self, item_name):
         return self.get_mock_class(item_name)
 
-    def __setitem__(self, item_name, item):
-        self.add_mock_for_message(item_name, item)
-
     def __contains__(self, item_name):
         return item_name in self._registry

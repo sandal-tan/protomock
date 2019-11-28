@@ -27,34 +27,16 @@ class MockMessage(Message):
         self.DESCRIPTOR = message_descriptor  # pylint: disable=invalid-name; Just copying protobuf
         self._values: Dict[str, Any] = {}
         self._provider = field_provider
-        self._predefine = predefine # This is not a typical action. Only here to deal with our predefine property.
         self.predefine = predefine
 
-    @property
-    def predefine(self) -> bool:
-        """Getter for the ``predefine`` property. This defines all values in the message before they are accessed.
+        if self.predefine:
+            self.define_all()
 
-        Returns:
-            Whether or not the mock's values where predefined
-
-        """
-        return self._predefine
-
-    @predefine.setter
-    def predefine(self, value: bool):
-        """Setter for the ``predefine`` property. This will define all fields in the message if set to `True`.
-
-        Args:
-            value: The value to which the property should be set
-
-        """
-        if value:
-            print('Predefining values')
-            self._predfine = value
-            for field_name in self.DESCRIPTOR.fields_by_name:
-                self.__getattr__(field_name)
-        else:
-            self._predfine = False
+    def define_all(self):
+        for field_name, field_descriptor in self.DESCRIPTOR.fields_by_name.items():
+            self.__getattr__(field_name)
+            if field_descriptor.type == FieldDescriptor.TYPE_MESSAGE:
+                self.__getattr__(field_name).define_all()
 
     def Clear(self):
         """Clear all values set in the proto."""
@@ -111,9 +93,5 @@ class MockMessage(Message):
             except KeyError:
                 raise UnknownFieldError(name, self.DESCRIPTOR.full_name)
             value = self._provider[field_descriptor]
-            # Make sure that all submessages are also defined
-            if field_descriptor.type == FieldDescriptor.TYPE_MESSAGE and self.predefine:
-                print(f'Attempting to set predefine: {self._predefine}')
-                value.predfine = True
             self._values[name] = value
         return self._values[name]
