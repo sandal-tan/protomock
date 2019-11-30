@@ -16,21 +16,26 @@ To install development environment:
 
 Print out a predefined, nested Message:
 
-    from protomock.registry import MockRegistry
-    from protos import message_pb2
-    registry = MockRegistry()
-    # The definition of this message depends on `SimpleMessage` but we don't have to add that mock first
-    registry.add_mock_for_message(message_pb2.DependentMessage.DESCRIPTOR)
-    registry.add_mock_for_message(message_pb2.SimpleMessage.DESCRIPTOR)
-    mocked_message = registry['DependentMessage'](predefine=True)
-    print(mocked_message)
+```python
+from protomock.registry import MockRegistry
+from protos import message_pb2
+
+registry = MockRegistry()
+# The definition of this message depends on `SimpleMessage` but we don't have to add that mock first
+registry.add_mock_for_message(message_pb2.DependentMessage.DESCRIPTOR)
+registry.add_mock_for_message(message_pb2.SimpleMessage.DESCRIPTOR)
+mocked_message = registry['DependentMessage'](predefine=True)
+print(mocked_message)
+```
 
 Example output:
 
-    name: "MEqrdAwwEAaqczasGUnt"
-    simple_message {
-      name: "MktveEpRimGsHDYmpzWy"
-      decimal: -228933.0
-      count: 1837
-      is_simple: false
-    }
+```
+name: "MEqrdAwwEAaqczasGUnt"
+simple_message {
+  name: "MktveEpRimGsHDYmpzWy"
+  decimal: -228933.0
+  count: 1837
+  is_simple: false
+}
+```
