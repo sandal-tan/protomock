@@ -1,10 +1,18 @@
 syntax = "proto3";
 
+enum Color {
+  COLOR_UNKNOWN = 0;
+  COLOR_RED = 1;
+  COLOR_GREEN = 2;
+  COLOR_BLUE = 3;
+}
+
 message SimpleMessage {
   string name = 1;
   float decimal = 2;
   int32 count = 3;
   bool is_simple = 4;
+  Color color = 5;
 }
 
 message DependentMessage {
