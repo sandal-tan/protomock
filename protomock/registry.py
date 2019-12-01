@@ -1,6 +1,6 @@
 """A registry for registering mocks for proto-items."""
 
-from google.protobuf.pyext._message import Descriptor as MessageDescriptor
+from google.protobuf.pyext._message import Descriptor as MessageDescriptor, EnumDescriptor
 
 from protomock.errors import NoMockFoundError
 from protomock.message import MockMessage
@@ -26,6 +26,18 @@ class MockRegistry:
 
         self._registry[message_descriptor.full_name] = (lambda predefine=False:
                                                         MockMessage(message_descriptor, self._provider, predefine))
+
+    def add_enum(self, enum_descriptor: EnumDescriptor):
+        """Add an enum to the registry.
+
+        Args:
+            enum_descriptor: The descriptor of the enum which will be added to the registry
+
+        """
+        # if enum_descriptor in self._registry:
+            # return
+
+        # self._registry[enum_descriptor] = 
 
     def get_mock_class(self, message_name) -> MockMessage:
         """Get a mock class for a message.
