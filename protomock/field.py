@@ -51,6 +51,10 @@ class FieldValueProvider:
         if field.type == FieldDescriptor.TYPE_STRING:
             return self._faker.pystr()
 
+        if field.type == FieldDescriptor.TYPE_ENUM:
+            enum_type = field.enum_type.full_name
+            return self._registry[enum_type].get_random_value()
+
         if field.type == FieldDescriptor.TYPE_MESSAGE:
             message_type = field.message_type.full_name
             return self._registry[message_type](self)

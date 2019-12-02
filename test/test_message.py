@@ -1,8 +1,15 @@
 from dataclasses import dataclass
 
+from google.protobuf.pyext._message import FieldDescriptor
+
 
 from protomock import message, errors
 from protos import message_pb2
+
+@dataclass
+class MockedColor:
+    name: str = 'COLOR_RED'
+    number: int = 1
 
 @dataclass(repr=False)
 class MockedSimpleClass:
@@ -11,12 +18,14 @@ class MockedSimpleClass:
     count: int = 42
     decimal: float = 42.0
     is_simple: bool = True
+    color: MockedColor = MockedColor()
 
     def __repr__(self):
         return f'''name: "{self.name}"
 decimal: {self.decimal}
 count: {self.count}
-is_simple: {str(self.is_simple).lower()}'''
+is_simple: {str(self.is_simple).lower()}
+color: {self.color.name}'''
 
 import pytest
 class PatchedProvider:
@@ -28,12 +37,13 @@ class PatchedProvider:
         if field_descriptor.full_name == 'DependentMessage.simple_message':
             print(type(field_descriptor.default_value))
         return {
-            str: cls.mocked_simple_class.name,
-            int: cls.mocked_simple_class.count,
-            float: cls.mocked_simple_class.decimal,
-            bool: cls.mocked_simple_class.is_simple,
-            type(None): cls.mocked_simple_class
-        }.get(type(field_descriptor.default_value), cls.mocked_simple_class.name)
+            FieldDescriptor.TYPE_STRING: cls.mocked_simple_class.name,
+            FieldDescriptor.TYPE_INT32: cls.mocked_simple_class.count,
+            FieldDescriptor.TYPE_FLOAT: cls.mocked_simple_class.decimal,
+            FieldDescriptor.TYPE_BOOL: cls.mocked_simple_class.is_simple,
+            FieldDescriptor.TYPE_MESSAGE: cls.mocked_simple_class,
+            FieldDescriptor.TYPE_ENUM: cls.mocked_simple_class.color
+        }.get(field_descriptor.type, cls.mocked_simple_class.name)
 
 @pytest.fixture(scope='function')
 def patched_provider():
@@ -55,6 +65,7 @@ class TestMessage:
         assert test_simple_message.decimal == 42.0
         assert test_simple_message.count == 42
         assert test_simple_message.is_simple
+        assert test_simple_message.color == 1
 
         with pytest.raises(errors.UnknownFieldError):
             test_simple_message.asdf
@@ -72,6 +83,7 @@ simple_message {
   decimal: 42.0
   count: 42
   is_simple: true
+  color: COLOR_RED
 }'''
         assert repr(test_dependent_message) == expected
 
@@ -89,5 +101,6 @@ simple_message {
         expected = '''name: "test"
 decimal: 42.0
 count: 42
-is_simple: true'''
+is_simple: true
+color: COLOR_RED'''
         assert repr(test_simple_message) == expected

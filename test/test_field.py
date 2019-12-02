@@ -3,11 +3,19 @@ from dataclasses import dataclass
 import pytest
 
 from protomock import field, errors
-from protos.message_pb2 import SimpleMessage, DependentMessage
+from protos.message_pb2 import SimpleMessage, DependentMessage, Color
+
+class MockedDummy:
+
+    def get_random_value(self):
+        return 'color'
 
 @pytest.fixture
 def test_provider():
-    return field.FieldValueProvider({SimpleMessage.DESCRIPTOR.full_name: (lambda _: 'simple_message')})
+    return field.FieldValueProvider({
+        SimpleMessage.DESCRIPTOR.full_name: (lambda _: 'simple_message'),
+        Color.DESCRIPTOR.full_name: MockedDummy()
+    })
 
 
 class TestFieldValueProvider:
@@ -33,6 +41,9 @@ class TestFieldValueProvider:
 
         is_simple_value = test_provider[SimpleMessage.DESCRIPTOR.fields[3]]
         assert isinstance(is_simple_value, bool)
+
+        color_value = test_provider[SimpleMessage.DESCRIPTOR.fields[4]]
+        assert color_value == 'color'
 
     @staticmethod
     def test_get_value_for_field_no_provider(test_provider):

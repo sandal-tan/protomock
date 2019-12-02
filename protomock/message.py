@@ -33,6 +33,7 @@ class MockMessage(Message):
             self.define_all()
 
     def define_all(self):
+        """Define all fields in the Message. This will define all fields in nested Messages."""
         for field_name, field_descriptor in self.DESCRIPTOR.fields_by_name.items():
             self.__getattr__(field_name)
             if field_descriptor.type == FieldDescriptor.TYPE_MESSAGE:
@@ -56,6 +57,9 @@ class MockMessage(Message):
                     field_repr = '\n'.join(f'  {field}' for field in repr(self._values[field_name]).splitlines())
                     if field_repr:
                         entries.append(f'{field_name} {{\n{field_repr}\n}}')
+                elif field_desc.type == FieldDescriptor.TYPE_ENUM:
+                    value = self._values[field_name]
+                    entries.append(f'{field_name}: {value.name}')
                 else:
                     value = self._values[field_name]
                     if isinstance(value, str):
@@ -87,11 +91,14 @@ class MockMessage(Message):
             UnknownFieldError: If a field is request that is unknown the Message
 
         """
+        try:
+            field_descriptor = self.DESCRIPTOR.fields_by_name[name]
+        except KeyError:
+            raise UnknownFieldError(name, self.DESCRIPTOR.full_name)
         if name not in self._values:
-            try:
-                field_descriptor = self.DESCRIPTOR.fields_by_name[name]
-            except KeyError:
-                raise UnknownFieldError(name, self.DESCRIPTOR.full_name)
             value = self._provider[field_descriptor]
             self._values[name] = value
-        return self._values[name]
+        value = self._values[name]
+        if field_descriptor.type == FieldDescriptor.TYPE_ENUM:
+            value = value.number
+        return value

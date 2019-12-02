@@ -3,6 +3,7 @@
 from google.protobuf.pyext._message import Descriptor as MessageDescriptor, EnumDescriptor
 
 from protomock.errors import NoMockFoundError
+from protomock.enum import Enum
 from protomock.message import MockMessage
 from protomock.field import FieldValueProvider
 
@@ -34,10 +35,10 @@ class MockRegistry:
             enum_descriptor: The descriptor of the enum which will be added to the registry
 
         """
-        # if enum_descriptor in self._registry:
-            # return
+        if enum_descriptor in self._registry:
+            return
 
-        # self._registry[enum_descriptor] = 
+        self._registry[enum_descriptor] = Enum(enum_descriptor)
 
     def get_mock_class(self, message_name) -> MockMessage:
         """Get a mock class for a message.
