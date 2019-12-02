@@ -38,7 +38,7 @@ class MockRegistry:
         if enum_descriptor in self._registry:
             return
 
-        self._registry[enum_descriptor] = Enum(enum_descriptor)
+        self._registry[enum_descriptor.full_name] = Enum(enum_descriptor)
 
     def get_mock_class(self, message_name) -> MockMessage:
         """Get a mock class for a message.

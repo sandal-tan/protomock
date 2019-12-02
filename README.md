@@ -24,6 +24,7 @@ registry = MockRegistry()
 # The definition of this message depends on `SimpleMessage` but we don't have to add that mock first
 registry.add_mock_for_message(message_pb2.DependentMessage.DESCRIPTOR)
 registry.add_mock_for_message(message_pb2.SimpleMessage.DESCRIPTOR)
+registry.add_enum(message_pb2.Color.DESCRIPTOR)
 mocked_message = registry['DependentMessage'](predefine=True)
 print(mocked_message)
 ```
@@ -37,5 +38,6 @@ simple_message {
   decimal: -228933.0
   count: 1837
   is_simple: false
+  color: COLOR_BLUE
 }
 ```
